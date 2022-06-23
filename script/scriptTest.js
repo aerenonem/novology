@@ -1,0 +1,349 @@
+import * as THREE from './three.module.js';
+import {OrbitControls} from  './Orbit.js';
+import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+
+//CONTROLS
+let camera,controls,skydome;
+let renderer;
+let scene,skyBox;
+let renderMaterials,sceneManager;
+const mouse = new THREE.Vector2();
+
+//Scene variables
+let currentState = -1
+let firstRoomScene, secondRoomScene, thirdRoomScene, introRoomScene
+const startScenePos = 0;
+var INTRO = 0
+var SCENE1 = 1
+var SCENE2 = 2
+var SCENE3 = 3
+
+//Arrow variables
+let arrowUrl = "Assets/arrow_white.png"
+let arrowMatScene1, arrowMatScene2, arrowMatScene3,arrowMatIntro;
+let arrowScene1, arrowScene2, arrowScene3,arrowIntro;
+const navArrowScale = new THREE.Vector3(4,2,4)
+var arrowDist = 25
+var arrowHeight = -12
+
+
+
+document.getElementById('content').addEventListener("click", function(e){
+	// console.log("clicked")
+	// new TWEEN.Tween(skydome.camera.rotation.set).to( { x: -1.0 }, 1500 ).start();
+	// new TWEEN.Tween(scene.rotation).to( { y: -1.0 }, 1500 ).start();
+	// runTween()
+	// controls.enabled = false;
+		
+	// 	gsap.to( camera.position, {
+	// 		duration: 1,
+	// 		y: 10,
+	// 		onUpdate: function() {
+			
+	// 			controls.update();
+			
+	// 		},
+	// 		onComplete: function() {
+			
+	// 			controls.enabled = true;
+			
+	// 		}
+	// 	} );
+});
+
+init();
+animate();
+
+function init() {
+
+    const container = document.getElementById( 'container' );
+    renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    container.appendChild( renderer.domElement );
+
+    scene = new THREE.Scene();
+	introRoomScene = new THREE.Scene();
+	firstRoomScene = new THREE.Scene();
+	secondRoomScene = new THREE.Scene();
+	thirdRoomScene = new THREE.Scene();
+	scene.add(introRoomScene)
+	scene.add(firstRoomScene)
+	scene.add(secondRoomScene)
+	scene.add(thirdRoomScene)
+	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 300 );
+	
+    //CREATED FOR RENDERING THE ENV MAP
+	skydome = {
+		scene: new THREE.Scene(),
+		camera : new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 300 ),
+	};
+	
+
+	//CONTORLS
+	skydome.camera.position.z =0.0000000000001; //ADDED BC MAKE THE DIFFERENCE BETWEEN SKYDOME AND VIDEOS
+
+	controls = new OrbitControls( skydome.camera, renderer.domElement );
+
+	controls.rotateSpeed = - 0.25;
+	controls.enableZoom = false;
+	controls.enablePan = false;
+	controls.enableDamping = true;
+	// controls.dispose()
+	// controls.rotateSpeed = - 0.25;
+
+	// controls.update();
+	// console.log(controls)
+	
+
+
+	sceneManager = new THREE.LoadingManager();
+	sceneManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+	
+		console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+	};
+	sceneStartFunc()
+	//SCENE LOADERS AND LOAD THE DATA
+	sceneManager.onLoad = function () {
+
+		console.log( 'Loading complete!');
+		if(currentState === INTRO){
+
+			controls.reset();
+			skyBox.rotation.y = 0
+			scene.rotation.y =0
+
+			firstRoomScene.add(arrowScene1)
+			arrowScene1.position.set(1.5*arrowDist * Math.sin(toRadians(80)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(0)));
+
+			secondRoomScene.add(arrowScene2)
+			arrowScene2.position.set(1.8*arrowDist * Math.sin(toRadians(-45)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(0)));
+
+			thirdRoomScene.add(arrowScene3)
+			arrowScene3.position.set(1.8*arrowDist * Math.sin(toRadians(-80)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(-80)));
+		}
+		else if(currentState === SCENE1){
+
+			controls.reset();
+			skyBox.rotation.y = 0
+			scene.rotation.y =0
+
+			introRoomScene.add(arrowIntro)
+			arrowIntro.position.set(arrowDist * Math.sin(toRadians(-160)) , arrowHeight, -arrowDist * Math.cos(toRadians(-160)));
+		}
+		else if(currentState === SCENE2){
+			controls.reset();
+			skyBox.rotation.y = 0
+			scene.rotation.y =0
+
+			introRoomScene.add(arrowIntro)
+			arrowIntro.position.set(1.5*arrowDist * Math.sin(toRadians(160)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(160)));
+		}
+		else if(currentState === SCENE3){
+			controls.reset();
+			skyBox.rotation.y = 0
+			scene.rotation.y =0
+
+			introRoomScene.add(arrowIntro)
+			arrowIntro.position.set(1.5*arrowDist * Math.sin(toRadians(-280)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(-280)));
+		}
+	}
+	
+	//ARROWS MATERIAL, POSITION, TEXTURE
+	var arrowTexture = new THREE.TextureLoader(sceneManager).load( arrowUrl );
+	arrowMatScene1 = new THREE.SpriteMaterial( { map: arrowTexture ,color: 0xffffff ,rotation:0,transparent: true,opacity:1} );
+	arrowScene1 = new THREE.Sprite( arrowMatScene1 );
+	arrowScene1.scale.copy(navArrowScale)
+
+	arrowMatScene2 = new THREE.SpriteMaterial( { map: arrowTexture ,color: 0xffffff ,rotation:0,transparent: true,opacity:1} );
+	arrowScene2 = new THREE.Sprite( arrowMatScene2 );
+	arrowScene2.scale.copy(navArrowScale)
+	
+	arrowMatScene3 = new THREE.SpriteMaterial( { map: arrowTexture ,color: 0xffffff ,rotation:0,transparent: true,opacity:1} );
+	arrowScene3 = new THREE.Sprite( arrowMatScene3 );
+	arrowScene3.scale.copy(navArrowScale)
+
+	arrowMatIntro = new THREE.SpriteMaterial( { map: arrowTexture ,color: 0xffffff ,rotation:0,transparent: true,opacity:1} );
+	arrowIntro = new THREE.Sprite( arrowMatIntro );
+	arrowIntro.scale.copy(navArrowScale)
+
+
+    window.addEventListener( 'resize', onWindowResize );
+	
+	clickTrigger()
+}
+// ENV MAP TEXTURE LOADER 
+function getTexturesFromAtlasFile( atlasImgUrl, tilesNum ) {
+	const textures = [];
+	for ( let i = 0; i < tilesNum; i ++ ) {
+		textures[ i ] = new THREE.Texture();
+	}
+	new THREE.ImageLoader(sceneManager)
+		.load( atlasImgUrl, ( image ) => {
+
+			let canvas, context;
+			const tileWidth = image.height;
+
+			for ( let i = 0; i < textures.length; i ++ ) {
+				canvas = document.createElement( 'canvas' );
+				context = canvas.getContext( '2d' );
+				canvas.height = tileWidth;
+				canvas.width = tileWidth;
+				context.drawImage( image, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth );
+				textures[ i ].image = canvas;
+				textures[ i ].needsUpdate = true;
+			}
+		} );
+	return textures;
+}
+
+function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+var angle = 0;
+var radius = 20;
+function animate() {
+	var dirVector = new THREE.Vector3();
+	camera.getWorldDirection(dirVector)
+	// controls.rotation.z +=0.00001
+
+    // PLS DO NOT EDIT
+    requestAnimationFrame( animate );
+	renderer.autoClear = true;
+	// controls.update();
+	camera.quaternion.copy( skydome.camera.quaternion );
+	renderer.render(skydome.scene, skydome.camera);
+	renderer.autoClear = false;
+	renderer.render(scene, camera );
+	console.log(skydome.camera.position)
+	console.log( skydome.camera.rotation)
+	// skyBox.rotation.y += 0.001
+	// scene.rotation.y += 0.001
+	runTween()
+}
+function runTween(){
+	requestAnimationFrame(runTween)
+	TWEEN.update()
+}
+
+// ENV MAP APPLIED TO THE BOX MESH
+function envLoad(textureUrl){
+	const textures = getTexturesFromAtlasFile( textureUrl, 6 );
+	renderMaterials = [];
+	for ( let i = 0; i < 6; i ++ ) {
+		renderMaterials.push( new THREE.MeshBasicMaterial( { map: textures[ i ] ,opacity: 1, transparent: true, depthWrite:false, depthTest :false} ) );
+	}
+	skyBox = new THREE.Mesh( new THREE.BoxGeometry( 1, 1, 1 ), renderMaterials );
+	skyBox.geometry.scale( 1, 1, -1 );
+	setTimeout(function(){
+		for ( let i = 0; i < 6; i ++ ) {
+			renderMaterials[i].transparent = true
+		}
+	}, 500);
+	skydome.scene.add( skyBox );
+	
+}
+
+function sceneStartFunc(){
+	if(startScenePos == 0){
+		currentState = INTRO
+		envLoad("./CubeMap/THINKER_CUBEMAP_0002.jpg")
+	}
+}
+//POSTIONING THE ARROW
+function toRadians(degrees) {
+	var pi = Math.PI;
+	return degrees * (pi/180);
+}
+// CLICK FUNCTIONS PLAY VIDEO, CHANGE ROOM
+function clickTrigger(){
+	const raycaster = new THREE.Raycaster();
+	document.addEventListener("click", event => {
+		mouse.x = event.clientX / window.innerWidth * 2 - 1;
+		mouse.y = -(event.clientY / window.innerHeight) * 2 +1 ;
+		raycaster.setFromCamera( mouse, camera );
+
+		var intersectFirstRoom = raycaster.intersectObjects( firstRoomScene.children, false );
+		var intersectSecondRoom = raycaster.intersectObjects( secondRoomScene.children, false );
+		var intersectThirdRoom = raycaster.intersectObjects( thirdRoomScene.children, false );
+		var intersectIntroRoom = raycaster.intersectObjects( introRoomScene.children, false );
+		// INTRO TO SCENE1 
+		if ( intersectFirstRoom.length > 0 ) {
+			setTimeout(function(){
+				envLoad("./CubeMap/THINKER_CUBEMAP_0007.jpg")
+				currentState = SCENE1
+
+			}, 500)
+			resetFunc()
+		} else if ( intersectSecondRoom.length > 0 ) {
+			setTimeout(function(){
+				envLoad("./CubeMap/THINKER_CUBEMAP_0001.jpg")
+				currentState = SCENE2
+
+			}, 500)
+			resetFunc()
+		}else if ( intersectThirdRoom.length > 0 ) {
+			setTimeout(function(){
+				envLoad("./CubeMap/THINKER_CUBEMAP_0000.jpg")
+				currentState = SCENE3
+
+			}, 500)
+			resetFunc()
+		}else if ( intersectIntroRoom.length > 0 ) {
+			setTimeout(function(){
+				envLoad("./CubeMap/THINKER_CUBEMAP_0002.jpg")
+				currentState = INTRO
+
+			}, 500)
+			resetFunc()
+		}
+		
+	});
+}
+//RESET EVERYTHING ON THE SCENE
+function resetFunc(){
+	let ArrowArray = [arrowScene1,arrowScene2,arrowScene3,arrowIntro]
+	let ArrowScene = [firstRoomScene,secondRoomScene,thirdRoomScene,introRoomScene]
+	setTimeout(function(){
+		for (var i = 0; i < ArrowArray.length; i++) {
+			ArrowScene[i].remove(ArrowArray[i]);
+		}
+	}, 200);
+}
+document.getElementById('content').addEventListener("click", function(e){
+	console.log("clicked")
+	controls.enabled = false;
+		new TWEEN.Tween(skydome.camera.rotation).to( { 
+			x:0,
+			z:0
+			}, 400 )
+			.onComplete(function () {
+					new TWEEN.Tween(skydome.camera.rotation).to( { 
+						y:1.4771640961978156
+						}, 1500 )
+					
+						.onComplete(function () {
+						
+							new TWEEN.Tween(skydome.camera.position).to( { 
+								x:9.956197042690752e-14,
+								y: -9.05306954682891e-16,
+								z:9.305614650809995e-15
+								}, 100 )
+								.onComplete(function () {
+									controls.update();
+									controls.enabled = true;
+								})
+								.start();
+							
+						})
+						.start();
+			})
+			.start();
+
+});
+
