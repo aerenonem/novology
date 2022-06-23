@@ -50,9 +50,11 @@ document.getElementById('content').addEventListener("click", function(e){
 	// 		}
 	// 	} );
 });
+document.getElementById("start-btn").addEventListener("click", function() {
+	init();
+	animate();
+})
 
-init();
-animate();
 
 function init() {
 	// alert("PHONE");
