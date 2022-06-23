@@ -55,7 +55,7 @@ init();
 animate();
 
 function init() {
-	alert("PHONE");
+	// alert("PHONE");
     const container = document.getElementById( 'container' );
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -87,7 +87,7 @@ function init() {
 
 	controls = new DeviceOrientationControls( skydome.camera, renderer.domElement );
 
-	// controls.rotateSpeed = - 0.25;
+// controls.rotateSpeed = - 0.25;
 	// controls.enableZoom = false;
 	// controls.enablePan = false;
 	// controls.enableDamping = true;
@@ -241,7 +241,7 @@ function animate() {
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
 	renderer.autoClear = true;
-	// controls.update();
+	controls.update();
 	camera.quaternion.copy( skydome.camera.quaternion );
 	renderer.render(skydome.scene, skydome.camera);
 	renderer.autoClear = false;
