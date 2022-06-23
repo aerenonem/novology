@@ -1,5 +1,5 @@
 import * as THREE from './three.module.js';
-import { DeviceOrientationControls } from './DeviceOrientationWithOrbit.js';
+import { DeviceOrientationControls } from './DeviceOrientation.js';
 import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
 //CONTROLS
@@ -241,7 +241,7 @@ function animate() {
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
 	renderer.autoClear = true;
-	controls.update();
+	// controls.update();
 	camera.quaternion.copy( skydome.camera.quaternion );
 	renderer.render(skydome.scene, skydome.camera);
 	renderer.autoClear = false;
