@@ -25,8 +25,8 @@ let arrowScene1, arrowScene2, arrowScene3,arrowIntro;
 const navArrowScale = new THREE.Vector3(4,2,4)
 var arrowDist = 25
 var arrowHeight = -12
-
-
+//VIDEO VARIABLES
+let bilboardVideo,bilboardVideoTex,videoMatBottleScene,VideoPlayBottleScene,Scene1Video,videoMeshBottleScene
 
 document.getElementById('content').addEventListener("click", function(e){
 	// console.log("clicked")
@@ -67,10 +67,12 @@ function init() {
 	firstRoomScene = new THREE.Scene();
 	secondRoomScene = new THREE.Scene();
 	thirdRoomScene = new THREE.Scene();
+	Scene1Video = new THREE.Scene();
 	scene.add(introRoomScene)
 	scene.add(firstRoomScene)
 	scene.add(secondRoomScene)
 	scene.add(thirdRoomScene)
+	scene.add(Scene1Video)
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 300 );
 	
     //CREATED FOR RENDERING THE ENV MAP
@@ -106,13 +108,17 @@ function init() {
 	sceneStartFunc()
 	//SCENE LOADERS AND LOAD THE DATA
 	sceneManager.onLoad = function () {
-
+		for ( let i = 0; i < 6; i ++ ) {
+			new TWEEN.Tween(renderMaterials[i]).to( { opacity: 1 }, 500 ).start();
+			runTween()
+		}
 		console.log( 'Loading complete!');
 		if(currentState === INTRO){
 
 			controls.reset();
 			skyBox.rotation.y = 0
 			scene.rotation.y =0
+
 
 			firstRoomScene.add(arrowScene1)
 			arrowScene1.position.set(1.5*arrowDist * Math.sin(toRadians(80)) , arrowHeight, -arrowDist *1.5* Math.cos(toRadians(0)));
@@ -128,6 +134,13 @@ function init() {
 			controls.reset();
 			skyBox.rotation.y = 0
 			scene.rotation.y =0
+
+			Scene1Video.add(VideoPlayBottleScene)
+			VideoPlayBottleScene.position.set(-50,-5.8,-23.2);
+
+			VideoPlayBottleScene.rotation.set(0,1.5,0)
+			VideoPlayBottleScene.scale.set(1.68,1.77,1)
+			bilboardVideo.play();
 
 			introRoomScene.add(arrowIntro)
 			arrowIntro.position.set(arrowDist * Math.sin(toRadians(-160)) , arrowHeight, -arrowDist * Math.cos(toRadians(-160)));
@@ -168,6 +181,19 @@ function init() {
 	arrowIntro = new THREE.Sprite( arrowMatIntro );
 	arrowIntro.scale.copy(navArrowScale)
 
+	videoMeshBottleScene = new THREE.PlaneGeometry( 9, 16);
+	//VIDEOS
+	// videoMeshBottleScene.lookAt(camera)
+	bilboardVideo  = document.createElement('video');
+	bilboardVideo.src = "./Assets/testVideo.mp4"; // Set video address
+
+	bilboardVideo.muted = true;
+	bilboardVideo.loop = true;
+	bilboardVideoTex = new THREE.VideoTexture(bilboardVideo)
+
+
+	videoMatBottleScene = new THREE.MeshBasicMaterial( {map: bilboardVideoTex,opacity:1,side: THREE.DoubleSide} );
+	VideoPlayBottleScene = new THREE.Mesh( videoMeshBottleScene, videoMatBottleScene );
 
     window.addEventListener( 'resize', onWindowResize );
 	
@@ -210,7 +236,7 @@ var radius = 20;
 function animate() {
 	var dirVector = new THREE.Vector3();
 	camera.getWorldDirection(dirVector)
-	// controls.rotation.z +=0.00001
+
 
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
@@ -220,10 +246,6 @@ function animate() {
 	renderer.render(skydome.scene, skydome.camera);
 	renderer.autoClear = false;
 	renderer.render(scene, camera );
-	console.log(skydome.camera.position)
-	console.log( skydome.camera.rotation)
-	// skyBox.rotation.y += 0.001
-	// scene.rotation.y += 0.001
 	runTween()
 }
 function runTween(){
@@ -236,7 +258,7 @@ function envLoad(textureUrl){
 	const textures = getTexturesFromAtlasFile( textureUrl, 6 );
 	renderMaterials = [];
 	for ( let i = 0; i < 6; i ++ ) {
-		renderMaterials.push( new THREE.MeshBasicMaterial( { map: textures[ i ] ,opacity: 1, transparent: true, depthWrite:false, depthTest :false} ) );
+		renderMaterials.push( new THREE.MeshBasicMaterial( { map: textures[ i ] ,opacity: 0, transparent: true, depthWrite:false, depthTest :false} ) );
 	}
 	skyBox = new THREE.Mesh( new THREE.BoxGeometry( 1, 1, 1 ), renderMaterials );
 	skyBox.geometry.scale( 1, 1, -1 );
@@ -307,8 +329,8 @@ function clickTrigger(){
 }
 //RESET EVERYTHING ON THE SCENE
 function resetFunc(){
-	let ArrowArray = [arrowScene1,arrowScene2,arrowScene3,arrowIntro]
-	let ArrowScene = [firstRoomScene,secondRoomScene,thirdRoomScene,introRoomScene]
+	let ArrowArray = [arrowScene1,arrowScene2,arrowScene3,arrowIntro,VideoPlayBottleScene]
+	let ArrowScene = [firstRoomScene,secondRoomScene,thirdRoomScene,introRoomScene,Scene1Video]
 	setTimeout(function(){
 		for (var i = 0; i < ArrowArray.length; i++) {
 			ArrowScene[i].remove(ArrowArray[i]);
