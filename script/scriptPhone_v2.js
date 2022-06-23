@@ -53,6 +53,7 @@ document.getElementById('content').addEventListener("click", function(e){
 document.getElementById("start-btn").addEventListener("click", function() {
 	init();
 	animate();
+	document.getElementById('start-btn').style.display = 'none';
 })
 
 
@@ -243,7 +244,7 @@ function animate() {
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
 	renderer.autoClear = true;
-	// controls.update();
+	controls.update();
 	camera.quaternion.copy( skydome.camera.quaternion );
 	renderer.render(skydome.scene, skydome.camera);
 	renderer.autoClear = false;
