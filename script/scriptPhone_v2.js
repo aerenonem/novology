@@ -27,7 +27,7 @@ var arrowDist = 25
 var arrowHeight = -12
 //VIDEO VARIABLES
 let bilboardVideo,bilboardVideoTex,videoMatBottleScene,VideoPlayBottleScene,Scene1Video,videoMeshBottleScene
-
+let isAnimated
 document.getElementById('content').addEventListener("click", function(e){
 	// console.log("clicked")
 	// new TWEEN.Tween(skydome.camera.rotation.set).to( { x: -1.0 }, 1500 ).start();
@@ -50,14 +50,12 @@ document.getElementById('content').addEventListener("click", function(e){
 	// 		}
 	// 	} );
 });
-document.getElementById("start-btn").addEventListener("click", function() {
-	init();
-	animate();
-	document.getElementById('start-btn').style.display = 'none';
-})
 
+init();
+animate();
 
 function init() {
+	isAnimated = true
 	// alert("PHONE");
     const container = document.getElementById( 'container' );
     renderer = new THREE.WebGLRenderer();
@@ -244,7 +242,9 @@ function animate() {
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
 	renderer.autoClear = true;
-	controls.update();
+	if(isAnimated){
+		controls.update();
+	}
 	camera.quaternion.copy( skydome.camera.quaternion );
 	renderer.render(skydome.scene, skydome.camera);
 	renderer.autoClear = false;
@@ -289,8 +289,8 @@ function toRadians(degrees) {
 function clickTrigger(){
 	const raycaster = new THREE.Raycaster();
 	document.addEventListener("click", event => {
-		mouse.x = event.clientX / window.innerWidth * 2 - 1;
-		mouse.y = -(event.clientY / window.innerHeight) * 2 +1 ;
+		mouse.x = event.touches[0].pageX / window.innerWidth * 2 - 1;
+		mouse.y = -(event.touches[0].pageY / window.innerHeight) * 2 +1 ;
 		raycaster.setFromCamera( mouse, camera );
 
 		var intersectFirstRoom = raycaster.intersectObjects( firstRoomScene.children, false );
@@ -342,6 +342,7 @@ function resetFunc(){
 }
 document.getElementById('content').addEventListener("click", function(e){
 	console.log("clicked")
+	isAnimated = false
 	controls.enabled = false;
 		new TWEEN.Tween(skydome.camera.rotation).to( { 
 			x:0,
@@ -362,6 +363,7 @@ document.getElementById('content').addEventListener("click", function(e){
 								.onComplete(function () {
 									controls.update();
 									controls.enabled = true;
+									isAnimated = true
 								})
 								.start();
 							
