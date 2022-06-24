@@ -270,10 +270,16 @@ function toRadians(degrees) {
 // CLICK FUNCTIONS PLAY VIDEO, CHANGE ROOM
 function clickTrigger(){
 	const raycaster = new THREE.Raycaster();
-	document.addEventListener("click", event => {
+	console.log("clickTrigger is run");
+	renderer.domElement.addEventListener("touchstart", event => {
+		console.log("touch event registered");
+		// })
+		// document.addEventListener("click", event => {
+		console.log(event);
 		mouse.x = event.touches[0].pageX / window.innerWidth * 2 - 1;
 		mouse.y = -(event.touches[0].pageY / window.innerHeight) * 2 +1 ;
 		raycaster.setFromCamera( mouse, camera );
+		console.log(mouse)
 
 		var intersectFirstRoom = raycaster.intersectObjects( firstRoomScene.children, false );
 		var intersectSecondRoom = raycaster.intersectObjects( secondRoomScene.children, false );
