@@ -27,7 +27,7 @@ var arrowDist = 25
 var arrowHeight = -12
 //VIDEO VARIABLES
 let bilboardVideo,bilboardVideoTex,videoMatBottleScene,VideoPlayBottleScene,Scene1Video,videoMeshBottleScene
-let isAnimated
+var isAnimated =true;
 document.getElementById('start-btn').addEventListener("click", function(e){
 	init();
 	animate();
@@ -37,7 +37,7 @@ document.getElementById('start-btn').addEventListener("click", function(e){
 
 
 function init() {
-	isAnimated = true
+	
 	// alert("PHONE");
     const container = document.getElementById( 'container' );
     renderer = new THREE.WebGLRenderer();
