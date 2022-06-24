@@ -332,7 +332,7 @@ function resetFunc(){
 document.getElementById('content').addEventListener("click", function(e){
 	console.log("clicked")
 	isAnimated = false
-	controls.enabled = false;
+	controls.disconnect()
 		new TWEEN.Tween(skydome.camera.rotation).to( { 
 			x:0,
 			z:0
@@ -359,8 +359,8 @@ document.getElementById('content').addEventListener("click", function(e){
 					controls.update();
 				})
 				.onComplete(function () {
-					
-					controls.enabled = true;
+					controls.connect()
+					// controls.enabled = true;
 					isAnimated = true
 				})
 				.start();
