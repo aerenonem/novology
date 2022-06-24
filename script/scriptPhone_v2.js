@@ -226,7 +226,7 @@ function animate() {
     requestAnimationFrame( animate );
 	renderer.autoClear = true;
 	if(isAnimated){
-		// controls.update();
+		controls.update();
 	}
 	camera.quaternion.copy( skydome.camera.quaternion );
 	renderer.render(skydome.scene, skydome.camera);
@@ -344,22 +344,26 @@ document.getElementById('content').addEventListener("click", function(e){
 					
 						.onComplete(function () {
 						
-							new TWEEN.Tween(skydome.camera.position).to( { 
-								x:9.956197042690752e-14,
-								y: -9.05306954682891e-16,
-								z:9.305614650809995e-15
-								}, 100 )
-								.onComplete(function () {
-									controls.update();
-									controls.enabled = true;
-									isAnimated = true
-								})
-								.start();
+						
 							
 						})
 						.start();
 			})
 			.start();
-
+			new TWEEN.Tween(skydome.camera.position).to( { 
+				x:9.956197042690752e-14,
+				y: -9.05306954682891e-16,
+				z:9.305614650809995e-15
+				}, 1900 )
+				.onUpdate(function(){
+					controls.update();
+				})
+				.onComplete(function () {
+					
+					controls.enabled = true;
+					isAnimated = true
+				})
+				.start();
+			
 });
 
