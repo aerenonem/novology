@@ -121,6 +121,7 @@ function init() {
 			Scene1Video.add(VideoPlayBottleScene)
 			VideoPlayBottleScene.position.set(-50,-5.8,-23.2);
 
+			bilboardVideo.currentTime = 0;
 			VideoPlayBottleScene.rotation.set(0,1.5,0)
 			VideoPlayBottleScene.scale.set(1.68,1.77,1)
 			bilboardVideo.play();
@@ -169,7 +170,7 @@ function init() {
 	// videoMeshBottleScene.lookAt(camera)
 	bilboardVideo  = document.createElement('video');
 	bilboardVideo.src = "./Assets/testVideo.mp4"; // Set video address
-
+	bilboardVideo.playsInline = true;
 	bilboardVideo.muted = true;
 	bilboardVideo.loop = true;
 	bilboardVideoTex = new THREE.VideoTexture(bilboardVideo)
