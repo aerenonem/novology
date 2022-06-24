@@ -220,7 +220,7 @@ var radius = 20;
 function animate() {
 	var dirVector = new THREE.Vector3();
 	camera.getWorldDirection(dirVector)
-
+	
 
     // PLS DO NOT EDIT
     requestAnimationFrame( animate );
@@ -233,6 +233,7 @@ function animate() {
 	renderer.autoClear = false;
 	renderer.render(scene, camera );
 	runTween()
+	console.log(skydome.camera.quaternion)
 }
 function runTween(){
 	requestAnimationFrame(runTween)
@@ -332,7 +333,7 @@ function resetFunc(){
 document.getElementById('content').addEventListener("click", function(e){
 	console.log("clicked")
 	isAnimated = false
-	controls.disconnect()
+	controls.enabled = false;
 		new TWEEN.Tween(skydome.camera.rotation).to( { 
 			x:0,
 			z:0
@@ -341,11 +342,7 @@ document.getElementById('content').addEventListener("click", function(e){
 					new TWEEN.Tween(skydome.camera.rotation).to( { 
 						y:1.4771640961978156
 						}, 1500 )
-					
-						.onComplete(function () {
-						
-						
-							
+						.onComplete(function () {					
 						})
 						.start();
 			})
@@ -359,11 +356,9 @@ document.getElementById('content').addEventListener("click", function(e){
 					controls.update();
 				})
 				.onComplete(function () {
-					controls.connect()
-					// controls.enabled = true;
+					controls.enabled = true;
 					isAnimated = true
 				})
-				.start();
-			
+				.start();			
 });
 

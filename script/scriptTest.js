@@ -28,28 +28,7 @@ var arrowHeight = -12
 //VIDEO VARIABLES
 let bilboardVideo,bilboardVideoTex,videoMatBottleScene,VideoPlayBottleScene,Scene1Video,videoMeshBottleScene
 
-document.getElementById('content').addEventListener("click", function(e){
-	// console.log("clicked")
-	// new TWEEN.Tween(skydome.camera.rotation.set).to( { x: -1.0 }, 1500 ).start();
-	// new TWEEN.Tween(scene.rotation).to( { y: -1.0 }, 1500 ).start();
-	// runTween()
-	// controls.enabled = false;
-		
-	// 	gsap.to( camera.position, {
-	// 		duration: 1,
-	// 		y: 10,
-	// 		onUpdate: function() {
-			
-	// 			controls.update();
-			
-	// 		},
-	// 		onComplete: function() {
-			
-	// 			controls.enabled = true;
-			
-	// 		}
-	// 	} );
-});
+document.getElementById('start-btn').style.display = 'none';
 
 init();
 animate();
